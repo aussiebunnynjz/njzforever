@@ -67,4 +67,15 @@
   <div class="tagline">NJZ FOREVER <span class="flag">AU</span></div>
   <div class="location">SYDNEY • NOV 15, 2025</div>
 </body>
+<!-- -->
+<script>
+setInterval(() => {
+  const now = new Date().toLocaleString('en-AU', {
+    timeZone: 'Australia/Sydney',
+    month: 'short', day: 'numeric', year: 'numeric',
+    hour: 'numeric', minute: '2-digit', hour12: true
+  }).replace(',', '').toUpperCase();
+  document.querySelector('.location').textContent = `SYDNEY • ${now}`;
+}, 1000);
+</script>  
 </html>
