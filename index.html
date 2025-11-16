@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>NJZ Forever Buzz</title>
-  
+
   <!-- SEO meta tags -->
   <meta name="description" content="NJZ Forever Buzz – A fan site by an Aussie Bunny. NewJeans love from Sydney. No rush, just vibes.">
   <meta name="keywords" content="NJZ, NewJeans, Bunnies, Aussie Bunny, Sydney, fan site, forever, buzz">
@@ -20,76 +20,53 @@
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap');
-    
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { 
-      background: #000; 
-      color: #fff; 
-      font-family: 'Orbitron', sans-serif; 
-      height: 100vh; 
-      display: flex; 
-      flex-direction: column; 
-      justify-content: center; 
-      align-items: center; 
-      text-align: center;
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#000;color:#fff;font-family:'Orbitron',sans-serif;height:100vh;display:flex;flex-direction:column;justify-content:center;padding:clamp(20px, 5vw, 60px) 0;}
+    .container{max-width:600px;width:100%;margin:0 auto;}
+    .buzz{font-size:clamp(5vw, 8vw, 10vw);font-weight:900;letter-spacing:.03em;animation:soft-glitch 6s infinite;text-align:center;}
+    @keyframes soft-glitch{
+      0%,100%{opacity:1;text-shadow:0 0 5px #ff1493,0 0 10px #ff69b4;}
+      20%,80%{opacity:.9;text-shadow:0.2px 0 #ff1493,-0.2px 0 #ff69b4;}
+      40%,60%{opacity:.8;text-shadow:0.3px 0 #ff1493,-0.3px 0 #ff69b4,0 0 1px #fff;}
     }
-    
-    .buzz { 
-      font-size: 14vw; 
-      font-weight: 900; 
-      letter-spacing: 0.05em;
-      position: relative;
-      animation: soft-glitch 4s infinite;
-    }
-    
-    @keyframes soft-glitch {
-      0%, 100% { 
-        opacity: 1;
-        text-shadow: 0 0 15px #ff1493, 0 0 30px #ff69b4;
-      }
-      20%, 80% { 
-        opacity: 0.95;
-        text-shadow: 1px 0 #ff1493, -1px 0 #ff69b4;
-      }
-      40%, 60% { 
-        opacity: 0.85;
-        text-shadow: 2px 0 #ff1493, -2px 0 #ff69b4, 0 0 5px #fff;
-      }
-    }
-    
-    .tagline { 
-      margin-top: 2vh; 
-      font-size: 1.8rem; 
-      font-weight: 700; 
-      letter-spacing: 0.15em; 
-      opacity: 0.9;
-    }
-    
-    .location { 
-      position: absolute; 
-      bottom: 20px; 
-      font-size: 0.9rem; 
-      opacity: 0.7; 
-      letter-spacing: 0.1em;
-    }
-    
-    .flag { font-size: 1.2rem; margin-left: 6px; }
+    .header{font-size:clamp(0.8rem, 1.2rem, 1.4rem);letter-spacing:.08em;opacity:.75;margin:clamp(0.5vh, 1vh, 1.5vh) 0;text-align:center;}
+    .flag{font-size:0.8rem;margin-left:4px;}
+    .message-container{display:flex;justify-content:center;}
+    .message{max-width:100%;line-height:1.5;font-size:clamp(0.55rem, 1.4vw, 0.85rem);opacity:.45;text-align:left;filter:blur(0.3px);}
+    .location{position:absolute;bottom:clamp(8px, 1.5vh, 16px);left:clamp(16px, 4vw, 32px);font-size:clamp(0.5rem, 0.7rem, 0.8rem);opacity:.45;letter-spacing:.06em;}
   </style>
 </head>
 <body>
-  <div class="buzz">BUZZ</div>
-  <div class="tagline">NJZ FOREVER <span class="flag">AU</span></div>
-  <div class="location">SYDNEY • NOV 15, 2025</div>
+  <div class="container">
+    <div class="buzz">BUZZ</div>
+    <div class="header">NJZ FOREVER <span class="flag">AU</span></div>
+    
+    <div class="message-container">
+      <div class="message">
+        I just want NewJeans to come back as one team.<br>
+        I’ve always been supporting you, and I’ll continue to do so.<br>
+        Even if everything isn’t perfect, I hope you can enjoy making music together.<br>
+        I really want to see you often.<br><br>
+        For the past year, I’ve been watching the same videos over and over.<br>
+        Now, I’m so excited to see your new journey begin.<br><br>
+        <em>— From Sydney, with love.</em>
+      </div>
+    </div>
+  </div>
+  
+  <div class="location">SYDNEY • NOV 16, 2025</div>
+
+  <script>
+    function updateSydneyTime() {
+      const now = new Date().toLocaleString('en-AU', {
+        timeZone: 'Australia/Sydney',
+        month: 'short', day: 'numeric', year: 'numeric',
+        hour: 'numeric', minute: '2-digit', hour12: true
+      }).replace(',', '').toUpperCase();
+      document.querySelector('.location').textContent = `SYDNEY • ${now}`;
+    }
+    updateSydneyTime();
+    setInterval(updateSydneyTime, 1000);
+  </script>
 </body>
-<!-- -->
-<script>
-setInterval(() => {
-  const now = new Date().toLocaleString('en-AU', {
-    timeZone: 'Australia/Sydney',
-    month: 'short', day: 'numeric', year: 'numeric',
-    hour: 'numeric', minute: '2-digit', hour12: true
-  }).replace(',', '').toUpperCase();
-  document.querySelector('.location').textContent = `SYDNEY • ${now}`;
-}, 1000);
-</script>  
 </html>
