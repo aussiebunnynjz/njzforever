@@ -10,7 +10,7 @@
   <meta name="keywords" content="NJZ, NewJeans, Bunnies, Aussie Bunny, Sydney, fan site, forever, buzz">
   <meta name="author" content="Aussie Bunny">
   <meta name="robots" content="index, follow">
-  
+
   <!-- Open Graph for social -->
   <meta property="og:title" content="NJZ Forever Buzz – Aussie Bunny">
   <meta property="og:description" content="NewJeans fan site from Sydney, Australia. NJZ forever.">
@@ -21,8 +21,69 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap');
     *{margin:0;padding:0;box-sizing:border-box;}
-    body{background:#000;color:#fff;font-family:'Orbitron',sans-serif;height:100vh;display:flex;flex-direction:column;justify-content:center;padding:clamp(20px, 5vw, 60px) 0;}
-    .container{max-width:600px;width:100%;margin:0 auto;}
+    body{background:#000;color:#fff;font-family:'Orbitron',sans-serif;height:100vh;display:flex;flex-direction:column;justify-content:center;padding:clamp(20px, 5vw, 60px) 0;position:relative;overflow:hidden;}
+    .stars{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;}
+    .star{position:absolute;background:#fff;border-radius:50%;opacity:0;animation:twinkle 3s infinite;}
+    .supernova{position:absolute;border-radius:50%;opacity:0;animation:supernova 4s forwards;}
+    
+    /* SHOOTING STAR: original style + smooth opacity transition */
+    .shooting-star{
+      position:absolute;
+      width:2px;
+      height:2px;
+      background:#fff;
+      opacity:0;
+      animation:shoot 1.2s forwards;
+    }
+    .shooting-star::before{
+      content:'';
+      position:absolute;
+      top:0;
+      left:-60px;
+      width:60px;
+      height:4px;
+      background:linear-gradient(to right, #ffffff, #ffffff88, transparent);
+      opacity:0; /* follows parent opacity */
+    }
+    @keyframes shoot{
+      0%   {opacity:0; transform:translateX(0) translateY(0) rotate(-45deg);}
+      10%  {opacity:1;}
+      70%  {opacity:1;}
+      90%  {opacity:0.4;}
+      100% {opacity:0; transform:translateX(-300px) translateY(300px) rotate(-45deg);}
+    }
+
+    .member-name{
+      position:absolute;
+      font-size:clamp(0.45rem, 0.55rem, 0.6rem);
+      font-weight:700;
+      letter-spacing:0.08em;
+      color:#fff;
+      opacity:0;
+      pointer-events:none;
+      z-index:0;
+      filter:blur(0.4px);
+      animation:driftFade 5s forwards;
+      white-space:nowrap;
+    }
+    @keyframes twinkle{
+      0%,100%{opacity:0;transform:scale(0);}
+      50%{opacity:1;transform:scale(1);}
+    }
+    @keyframes supernova{
+      0%{opacity:0;transform:scale(0);}
+      10%{opacity:1;transform:scale(1);}
+      50%{opacity:0.8;transform:scale(3);}
+      100%{opacity:0;transform:scale(5);}
+    }
+    @keyframes driftFade{
+      0%{opacity:0;transform:translateY(0) translateX(0);}
+      15%{opacity:0.25;}
+      85%{opacity:0.25;}
+      100%{opacity:0;transform:translateY(-8px) translateX(4px);}
+    }
+    
+    .container{max-width:600px;width:100%;margin:0 auto;position:relative;z-index:1;}
     .buzz{font-size:clamp(5vw, 8vw, 10vw);font-weight:900;letter-spacing:.03em;animation:soft-glitch 6s infinite;text-align:center;}
     @keyframes soft-glitch{
       0%,100%{opacity:1;text-shadow:0 0 5px #ff1493,0 0 10px #ff69b4;}
@@ -33,14 +94,15 @@
     .flag{font-size:0.8rem;margin-left:4px;}
     .message-container{display:flex;justify-content:center;}
     .message{max-width:100%;line-height:1.5;font-size:clamp(0.55rem, 1.4vw, 0.85rem);opacity:.45;text-align:left;filter:blur(0.3px);}
-    .location{position:absolute;bottom:clamp(8px, 1.5vh, 16px);left:clamp(16px, 4vw, 32px);font-size:clamp(0.5rem, 0.7rem, 0.8rem);opacity:.45;letter-spacing:.06em;}
+    .location{position:absolute;bottom:clamp(8px, 1.5vh, 16px);left:clamp(16px, 4vw, 32px);font-size:clamp(0.5rem, 0.7rem, 0.8rem);opacity:.45;letter-spacing:.06em;z-index:1;}
   </style>
 </head>
 <body>
+  <div class="stars" id="stars"></div>
+
   <div class="container">
     <div class="buzz">BUZZ</div>
     <div class="header">NJZ FOREVER <span class="flag">AU</span></div>
-    
     <div class="message-container">
       <div class="message">
         I just want NewJeans to come back as one team.<br>
@@ -49,14 +111,88 @@
         I really want to see you often.<br><br>
         For the past year, I’ve been watching the same videos over and over.<br>
         Now, I’m so excited to see your new journey begin.<br><br>
-        <em>— From Sydney, with love.</em>
+        <em>— Bunnies from Sydney</em>
       </div>
     </div>
   </div>
-  
-  <div class="location">SYDNEY • NOV 16, 2025</div>
+
+  <div class="location">SYDNEY • NOV 16, 2025 • 10:15 PM</div>
 
   <script>
+    const starsContainer = document.getElementById('stars');
+    const numStars = 80;
+    const members = ['MINJI', 'HANNI', 'DANIELLE', 'HAERIN', 'HYEIN'];
+
+    // 1. Regular twinkling stars (created once)
+    for (let i = 0; i < numStars; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      const size = Math.random() * 2 + 1;
+      star.style.width = star.style.height = `${size}px`;
+      star.style.left = `${Math.random() * 100}%`;
+      star.style.top  = `${Math.random() * 100}%`;
+      star.style.animationDelay = `${Math.random() * 3}s`;
+      star.style.boxShadow = `0 0 ${size * 2}px #fff`;
+      starsContainer.appendChild(star);
+    }
+
+    // 2. Supernova (random interval event)
+    function createSupernova() {
+      const sn = document.createElement('div');
+      sn.className = 'supernova';
+      const size = Math.random() * 6 + 8;
+      const hue = Math.random() * 60 + 180;
+      sn.style.width = sn.style.height = `${size}px`;
+      sn.style.left = `${Math.random() * 100}%`;
+      sn.style.top  = `${Math.random() * 100}%`;
+      sn.style.background = `radial-gradient(circle, hsl(${hue},100%,80%), transparent)`;
+      sn.style.boxShadow = `0 0 ${size * 3}px hsl(${hue},100%,70%)`;
+      starsContainer.appendChild(sn);
+      sn.addEventListener('animationend', () => sn.remove());
+    }
+
+    // 3. Shooting star - original style + improved opacity fade
+    function createShootingStar() {
+      const ss = document.createElement('div');
+      ss.className = 'shooting-star';
+      ss.style.left = `${Math.random() * 70 + 15}%`;
+      ss.style.top  = `${Math.random() * 40}%`;
+      starsContainer.appendChild(ss);
+      ss.addEventListener('animationend', () => ss.remove());
+    }
+
+    // 4. Member name fade-in/out (tiny, random)
+    function createMemberName() {
+      const name = members[Math.floor(Math.random() * members.length)];
+      const el = document.createElement('div');
+      el.className = 'member-name';
+      el.textContent = name;
+      let x, y;
+      do {
+        x = Math.random() * 90 + 5;
+        y = Math.random() * 85 + 5;
+      } while (x > 25 && x < 75 && y > 30 && y < 70);
+      el.style.left = `${x}%`;
+      el.style.top = `${y}%`;
+      el.style.animationDuration = `${Math.random() * 3 + 4}s`;
+      starsContainer.appendChild(el);
+      el.addEventListener('animationend', () => el.remove());
+    }
+
+    // 5. Event scheduling (random intervals)
+    function scheduleEvent(fn, min = 6000, max = 12000) {
+      const delay = Math.random() * (max - min) + min;
+      setTimeout(() => {
+        fn();
+        scheduleEvent(fn, min, max);
+      }, delay);
+    }
+
+    scheduleEvent(createSupernova, 8000, 15000);
+    scheduleEvent(createShootingStar, 7000, 13000);
+    scheduleEvent(createMemberName, 15000, 30000);
+
+    // 6. Real-time Sydney clock
     function updateSydneyTime() {
       const now = new Date().toLocaleString('en-AU', {
         timeZone: 'Australia/Sydney',
