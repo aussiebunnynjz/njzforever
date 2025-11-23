@@ -97,56 +97,41 @@
     .location{position:absolute;bottom:clamp(8px, 1.5vh, 16px);left:clamp(16px, 4vw, 32px);font-size:clamp(0.5rem, 0.7rem, 0.8rem);opacity:.45;letter-spacing:.06em;z-index:1;}
 
     .cheer-container {
-        margin-top: 30px;
-        text-align: center;
-        z-index: 10;
-        position: relative;
+      margin-top: 30px;
+      text-align: center;
+      z-index: 100; 
+      position: relative;
     }
-    
+
     .binky-btn {
-        background: transparent;
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        color: #fff;
-        padding: 12px 24px;
-        font-family: 'Orbitron', sans-serif;
-        font-size: 0.9rem;
-        border-radius: 30px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        position: relative;
-        overflow: hidden;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      color: #fff;
+      padding: 12px 28px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.8rem;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      backdrop-filter: blur(5px);
     }
 
     .binky-btn:hover {
-        border-color: #fff;
-        box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.1);
+      border-color: #fff;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
     }
 
-    .binky-btn:active {
-        transform: scale(0.95);
-    }
-
-    .glow-ripple {
-        position: absolute;
-        border-radius: 50%;
-        transform: translate(-50%, -50%);
-        pointer-events: none;
-        animation: ripple-anim 1s linear forwards;
-        z-index: -1;
-    }
-
-    @keyframes ripple-anim {
-        0% { width: 0; height: 0; opacity: 0.8; }
-        100% { width: 300px; height: 300px; opacity: 0; }
-    }
+    .binky-btn:active { transform: scale(0.95); }
 
     .count-display {
-        font-size: 0.7rem;
-        margin-top: 10px;
-        opacity: 0.6;
-        letter-spacing: 0.05em;
+      font-size: 0.65rem;
+      margin-top: 12px;
+      opacity: 0.5;
+      letter-spacing: 0.1em;
+      font-weight: 300;
     }
   </style>
   <link rel="sitemap" type="application/xml" href="/sitemap.xml">
@@ -169,128 +154,122 @@
       </div>
     </div>
     <div class="cheer-container">
-        <button class="binky-btn" id="cheerBtn">✨ Send Light</button>
-        <div class="count-display">Lights sent: <span id="cheerCount">Loading...</span></div>
+      <button class="binky-btn" id="cheerBtn">✨ Send Light</button>
+      <div class="count-display">Total Lights: <span id="cheerCount">...</span></div>
     </div>
   </div>
 
   <div class="location">SYDNEY • NOV 16, 2025 • 10:15 PM</div>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCceLtvt_Kl0lRhV-F9wFwDBhdwJUmfrOs",
-      authDomain: "njz-forever.firebaseapp.com",
-      projectId: "njz-forever",
-      storageBucket: "njz-forever.firebasestorage.app",
-      messagingSenderId: "528117746578",
-      appId: "1:528117746578:web:02ebc201b5f76625b68f4b",
-      measurementId: "G-2MBTSQ98JK"
-    };
-    // -----------------------------------------------------------
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const countRef = ref(db, 'cheers/count'); 
-
+<script>
     const starsContainer = document.getElementById('stars');
     const numStars = 80;
     const members = ['MINJI', 'HANNI', 'DANIELLE', 'HAERIN', 'HYEIN'];
 
-    // 1. Regular twinkling stars (created once)
     for (let i = 0; i < numStars; i++) {
-      const star = document.createElement('div');
-      star.className = 'star';
-      const size = Math.random() * 2 + 1;
-      star.style.width = star.style.height = `${size}px`;
-      star.style.left = `${Math.random() * 100}%`;
-      star.style.top  = `${Math.random() * 100}%`;
-      star.style.animationDelay = `${Math.random() * 3}s`;
-      star.style.boxShadow = `0 0 ${size * 2}px #fff`;
-      starsContainer.appendChild(star);
+        const star = document.createElement('div');
+        star.className = 'star';
+        const size = Math.random() * 2 + 1;
+        star.style.width = star.style.height = `${size}px`;
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.top  = `${Math.random() * 100}%`;
+        star.style.animationDelay = `${Math.random() * 3}s`;
+        star.style.boxShadow = `0 0 ${size * 2}px #fff`;
+        starsContainer.appendChild(star);
     }
 
-    // 2. Supernova (random interval event)
     function createSupernova() {
-      const sn = document.createElement('div');
-      sn.className = 'supernova';
-      const size = Math.random() * 6 + 8;
-      const hue = Math.random() * 60 + 180;
-      sn.style.width = sn.style.height = `${size}px`;
-      sn.style.left = `${Math.random() * 100}%`;
-      sn.style.top  = `${Math.random() * 100}%`;
-      sn.style.background = `radial-gradient(circle, hsl(${hue},100%,80%), transparent)`;
-      sn.style.boxShadow = `0 0 ${size * 3}px hsl(${hue},100%,70%)`;
-      starsContainer.appendChild(sn);
-      sn.addEventListener('animationend', () => sn.remove());
+        const sn = document.createElement('div');
+        sn.className = 'supernova';
+        const size = Math.random() * 6 + 8;
+        const hue = Math.random() * 60 + 180;
+        sn.style.width = sn.style.height = `${size}px`;
+        sn.style.left = `${Math.random() * 100}%`;
+        sn.style.top  = `${Math.random() * 100}%`;
+        sn.style.background = `radial-gradient(circle, hsl(${hue},100%,80%), transparent)`;
+        sn.style.boxShadow = `0 0 ${size * 3}px hsl(${hue},100%,70%)`;
+        starsContainer.appendChild(sn);
+        sn.addEventListener('animationend', () => sn.remove());
     }
 
-    // 3. Shooting star - original style + improved opacity fade
     function createShootingStar() {
-      const ss = document.createElement('div');
-      ss.className = 'shooting-star';
-      ss.style.left = `${Math.random() * 70 + 15}%`;
-      ss.style.top  = `${Math.random() * 40}%`;
-      starsContainer.appendChild(ss);
-      ss.addEventListener('animationend', () => ss.remove());
+        const ss = document.createElement('div');
+        ss.className = 'shooting-star';
+        ss.style.left = `${Math.random() * 70 + 15}%`;
+        ss.style.top  = `${Math.random() * 40}%`;
+        starsContainer.appendChild(ss);
+        ss.addEventListener('animationend', () => ss.remove());
     }
 
-    // 4. Member name fade-in/out (tiny, random)
     function createMemberName() {
-      const name = members[Math.floor(Math.random() * members.length)];
-      const el = document.createElement('div');
-      el.className = 'member-name';
-      el.textContent = name;
-      let x, y;
-      do {
-        x = Math.random() * 90 + 5;
-        y = Math.random() * 85 + 5;
-      } while (x > 25 && x < 75 && y > 30 && y < 70);
-      el.style.left = `${x}%`;
-      el.style.top = `${y}%`;
-      el.style.animationDuration = `${Math.random() * 3 + 4}s`;
-      starsContainer.appendChild(el);
-      el.addEventListener('animationend', () => el.remove());
+        const name = members[Math.floor(Math.random() * members.length)];
+        const el = document.createElement('div');
+        el.className = 'member-name';
+        el.textContent = name;
+        let x, y;
+        do {
+            x = Math.random() * 90 + 5;
+            y = Math.random() * 85 + 5;
+        } while (x > 25 && x < 75 && y > 30 && y < 70);
+        el.style.left = `${x}%`;
+        el.style.top = `${y}%`;
+        el.style.animationDuration = `${Math.random() * 3 + 4}s`;
+        starsContainer.appendChild(el);
+        el.addEventListener('animationend', () => el.remove());
     }
 
-    // 5. Event scheduling (random intervals)
     function scheduleEvent(fn, min = 6000, max = 12000) {
-      const delay = Math.random() * (max - min) + min;
-      setTimeout(() => {
-        fn();
-        scheduleEvent(fn, min, max);
-      }, delay);
+        const delay = Math.random() * (max - min) + min;
+        setTimeout(() => {
+            fn();
+            scheduleEvent(fn, min, max);
+        }, delay);
     }
 
     scheduleEvent(createSupernova, 8000, 15000);
     scheduleEvent(createShootingStar, 7000, 13000);
     scheduleEvent(createMemberName, 15000, 30000);
 
-    // 6. Real-time Sydney clock
     function updateSydneyTime() {
-      const now = new Date().toLocaleString('en-AU', {
-        timeZone: 'Australia/Sydney',
-        month: 'short', day: 'numeric', year: 'numeric',
-        hour: 'numeric', minute: '2-digit', hour12: true
-      }).replace(',', '').toUpperCase();
-      document.querySelector('.location').textContent = `SYDNEY • ${now}`;
+        const now = new Date().toLocaleString('en-AU', {
+            timeZone: 'Australia/Sydney',
+            month: 'short', day: 'numeric', year: 'numeric',
+            hour: 'numeric', minute: '2-digit', hour12: true
+        }).replace(',', '').toUpperCase();
+        document.querySelector('.location').textContent = `SYDNEY • ${now}`;
     }
     updateSydneyTime();
     setInterval(updateSydneyTime, 1000);
+</script>
 
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
+    import { getDatabase, ref, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
-const cheerBtn = document.getElementById('cheerBtn');
+    const firebaseConfig = {
+        apiKey: "AIzaSyCceLtvt_Kl0lRhV-F9wFwDBhdwJUmfrOs",
+        authDomain: "njz-forever.firebaseapp.com",
+        databaseURL: "https://njz-forever-default-rtdb.firebaseio.com", 
+        projectId: "njz-forever",
+        storageBucket: "njz-forever.firebasestorage.app", 
+        messagingSenderId: "528117746578",
+        appId: "1:528117746578:web:02ebc201b5f76625b68f4b",
+        measurementId: "G-2MBTSQ98JK"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app); 
+    const db = getDatabase(app);         
+    const countRef = ref(db, 'cheers/count'); 
+
+    const cheerBtn = document.getElementById('cheerBtn');
     const cheerCountSpan = document.getElementById('cheerCount');
     const njzColors = ['#2D55FF', '#FF69B4', '#00FF00', '#FFFFFF'];
 
     onValue(countRef, (snapshot) => {
         const data = snapshot.val();
-        cheerCountSpan.innerText = data || 0; 
-        
-        cheerCountSpan.style.color = '#fff';
-        setTimeout(() => cheerCountSpan.style.color = 'rgba(255,255,255,0.6)', 200);
+        cheerCountSpan.innerText = data ? data.toLocaleString() : 0;
     });
 
     cheerBtn.addEventListener('click', () => {
@@ -299,30 +278,20 @@ const cheerBtn = document.getElementById('cheerBtn');
         });
 
         const ripple = document.createElement('div');
-        ripple.className = 'glow-ripple';
-        const randomColor = njzColors[Math.floor(Math.random() * njzColors.length)];
-        ripple.style.background = `radial-gradient(circle, ${randomColor} 0%, transparent 70%)`;
-        
-        const rect = cheerBtn.getBoundingClientRect();
+        ripple.className = 'supernova'; // 기존 이펙트 재활용
         ripple.style.left = '50%';
         ripple.style.top = '50%';
-        cheerBtn.appendChild(ripple);
-
-        const flash = document.createElement('div');
-        flash.className = 'supernova';
-        flash.style.left = '50%';
-        flash.style.top = '50%';
-        flash.style.width = '10px';
-        flash.style.height = '10px';
-        flash.style.background = `radial-gradient(circle, ${randomColor}, transparent)`;
-        flash.style.boxShadow = `0 0 50px ${randomColor}`;
-        flash.style.zIndex = '5';
-        document.getElementById('stars').appendChild(flash);
+        ripple.style.width = '20px';
+        ripple.style.height = '20px';
+        const randomColor = njzColors[Math.floor(Math.random() * njzColors.length)];
+        ripple.style.background = `radial-gradient(circle, ${randomColor}, transparent)`;
+        ripple.style.boxShadow = `0 0 60px ${randomColor}`;
+        ripple.style.zIndex = '5';
+        document.getElementById('stars').appendChild(ripple);
         
-        setTimeout(() => ripple.remove(), 1000);
-        setTimeout(() => flash.remove(), 4000);
+        setTimeout(() => ripple.remove(), 2000);
     });
+</script>
 
-  </script>
 </body>
 </html>
