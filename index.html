@@ -95,7 +95,61 @@
     .message-container{display:flex;justify-content:center;}
     .message{max-width:100%;line-height:1.5;font-size:clamp(0.55rem, 1.4vw, 0.85rem);opacity:.45;text-align:left;filter:blur(0.3px);}
     .location{position:absolute;bottom:clamp(8px, 1.5vh, 16px);left:clamp(16px, 4vw, 32px);font-size:clamp(0.5rem, 0.7rem, 0.8rem);opacity:.45;letter-spacing:.06em;z-index:1;}
+
+    .cheer-container {
+        margin-top: 30px;
+        text-align: center;
+        z-index: 10;
+        position: relative;
+    }
+    
+    .binky-btn {
+        background: transparent;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        color: #fff;
+        padding: 12px 24px;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.9rem;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .binky-btn:hover {
+        border-color: #fff;
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+    }
+
+    .binky-btn:active {
+        transform: scale(0.95);
+    }
+
+    .glow-ripple {
+        position: absolute;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+        animation: ripple-anim 1s linear forwards;
+        z-index: -1;
+    }
+
+    @keyframes ripple-anim {
+        0% { width: 0; height: 0; opacity: 0.8; }
+        100% { width: 300px; height: 300px; opacity: 0; }
+    }
+
+    .count-display {
+        font-size: 0.7rem;
+        margin-top: 10px;
+        opacity: 0.6;
+        letter-spacing: 0.05em;
+    }
   </style>
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
 </head>
 <body>
   <div class="stars" id="stars"></div>
@@ -114,11 +168,33 @@
         <em>— Bunnies from Sydney</em>
       </div>
     </div>
+    <div class="cheer-container">
+        <button class="binky-btn" id="cheerBtn">✨ Send Light</button>
+        <div class="count-display">Lights sent: <span id="cheerCount">0</span></div>
+    </div>
   </div>
 
   <div class="location">SYDNEY • NOV 16, 2025 • 10:15 PM</div>
 
-  <script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCceLtvt_Kl0lRhV-F9wFwDBhdwJUmfrOs",
+      authDomain: "njz-forever.firebaseapp.com",
+      projectId: "njz-forever",
+      storageBucket: "njz-forever.firebasestorage.app",
+      messagingSenderId: "528117746578",
+      appId: "1:528117746578:web:02ebc201b5f76625b68f4b",
+      measurementId: "G-2MBTSQ98JK"
+    };
+    // -----------------------------------------------------------
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const countRef = ref(db, 'cheers/count'); 
+
     const starsContainer = document.getElementById('stars');
     const numStars = 80;
     const members = ['MINJI', 'HANNI', 'DANIELLE', 'HAERIN', 'HYEIN'];
@@ -203,6 +279,50 @@
     }
     updateSydneyTime();
     setInterval(updateSydneyTime, 1000);
+
+
+const cheerBtn = document.getElementById('cheerBtn');
+    const cheerCountSpan = document.getElementById('cheerCount');
+    const njzColors = ['#2D55FF', '#FF69B4', '#00FF00', '#FFFFFF'];
+
+    onValue(countRef, (snapshot) => {
+        const data = snapshot.val();
+        cheerCountSpan.innerText = data || 0; 
+        
+        cheerCountSpan.style.color = '#fff';
+        setTimeout(() => cheerCountSpan.style.color = 'rgba(255,255,255,0.6)', 200);
+    });
+
+    cheerBtn.addEventListener('click', () => {
+        runTransaction(countRef, (currentCount) => {
+            return (currentCount || 0) + 1;
+        });
+
+        const ripple = document.createElement('div');
+        ripple.className = 'glow-ripple';
+        const randomColor = njzColors[Math.floor(Math.random() * njzColors.length)];
+        ripple.style.background = `radial-gradient(circle, ${randomColor} 0%, transparent 70%)`;
+        
+        const rect = cheerBtn.getBoundingClientRect();
+        ripple.style.left = '50%';
+        ripple.style.top = '50%';
+        cheerBtn.appendChild(ripple);
+
+        const flash = document.createElement('div');
+        flash.className = 'supernova';
+        flash.style.left = '50%';
+        flash.style.top = '50%';
+        flash.style.width = '10px';
+        flash.style.height = '10px';
+        flash.style.background = `radial-gradient(circle, ${randomColor}, transparent)`;
+        flash.style.boxShadow = `0 0 50px ${randomColor}`;
+        flash.style.zIndex = '5';
+        document.getElementById('stars').appendChild(flash);
+        
+        setTimeout(() => ripple.remove(), 1000);
+        setTimeout(() => flash.remove(), 4000);
+    });
+
   </script>
 </body>
 </html>
